@@ -12,5 +12,13 @@ public:
 
 	SmoothOptim();
 	~SmoothOptim();
+
+private:
+
+	Path initProfile();
+	float maxVel(float currIter);
+	float maxAcc(float currIter);
+	float getMaxAccVelocity(float currIter, float lastIter);
+	Path smoothJerk(float currIter);
 };
 
