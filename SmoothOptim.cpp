@@ -2,6 +2,10 @@
 
 
 
+void SmoothOptim::generateProfile(Path & in)
+{
+}
+
 SmoothOptim::SmoothOptim()
 {
 }

@@ -2,6 +2,10 @@
 
 
 
+void OCVPath::DrawPath(Path in)
+{
+}
+
 OCVPath::OCVPath()
 {
 }

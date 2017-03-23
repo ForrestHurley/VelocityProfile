@@ -7,11 +7,16 @@ public:
 
 	struct QuinticBez
 	{
-		std::vector<Point> start;
-		std::vector<Point> end;
-		std::vector<Point> initTangent;
-		std::vector<Point> finTangent;
+		std::vector<Vect> start;
+		std::vector<Vect> end;
+		std::vector<Vect> initTangent;
+		std::vector<Vect> finTangent;
 	};
+
+	void posAtParam(float param);
+	void velAtParam(float param);
+	void accAtParam(float param);
+	void curvAtParam(float param);
 
 	Curve();
 	~Curve();
