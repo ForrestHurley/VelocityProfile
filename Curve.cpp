@@ -52,14 +52,15 @@ float Curve::curvAtParam(float param)
 	int segment;
 	float segParam;
 	getSegmentParam(segment, segParam, param);
+
 	return 0.0;
 }
 
 Curve::PointSet Curve::DiffBezier(PointSet points)
 {
 	PointSet out;
-	for (int i = 0; i < points.points.size(); i++) {
-
+	for (int i = 0; i < points.points.size() - 1; i++) {
+		out.points.push_back((points.points[i + 1] - points.points[i])*(float)points.points.size());
 	}
 
 	return out;
@@ -68,10 +69,11 @@ Curve::PointSet Curve::DiffBezier(PointSet points)
 Vect Curve::Bezier(PointSet points, float param)
 {
 	Vect out;
+	std::vector<int> pascal = PascalTriangle(points.points.size());
 	float marap = 1. - param;
 	for (int i = 0; i < points.points.size(); i++) {
-		out.x += points.points[i].x*powf(param, i)*powf(marap, points.points.size() - i);
-		out.y += points.points[i].y*powf(param, i)*powf(marap, points.points.size() - i);
+		out.x += (float)pascal[i]*points.points[i].x*powf(param, i)*powf(marap, points.points.size() - i);
+		out.y += (float)pascal[i]*points.points[i].y*powf(param, i)*powf(marap, points.points.size() - i);
 	}
 	return out;
 }

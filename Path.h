@@ -10,6 +10,20 @@ struct Vect
 		return x*b.x+ y*b.y;
 	}
 
+	Vect operator*(const float &b) const {
+		Vect out;
+		out.x *= b;
+		out.y *= b;
+		return out;
+	}
+
+	Vect operator-(const Vect &b) const {
+		Vect out;
+		out.x -= b.x;
+		out.y -= b.y;
+		return out;
+	}
+
 	float dot(const Vect &b) const{
 		return x*b.y - y*b.x;
 	}
