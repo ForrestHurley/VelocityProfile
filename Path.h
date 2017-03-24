@@ -3,18 +3,19 @@
 
 struct Vect
 {
-	float x;
-	float y;
+	float x = 0;
+	float y = 0;
 
-	Vect operator*(const Vect &b) const{
-		Vect out;
-		out.x = x*b.x;
-		out.y = y*b.y;
-		return out;
+	float operator*(const Vect &b) const{
+		return x*b.x+ y*b.y;
 	}
 
-	float operator$(const Vect &b) const{
+	float dot(const Vect &b) const{
 		return x*b.y - y*b.x;
+	}
+
+	float dist(const Vect &b) const {
+		return sqrtf((x - b.x)*(x - b.x) + (y - b.y)*(y - b.y));
 	}
 };
 
@@ -35,15 +36,18 @@ public:
 
 	std::vector<Segment> path;
 
+	void initPath();
+
 	void updateLocations();
 	void updateCurvature();
 	void updateArcLen();
 
-	void posAtParam(float param);
-	void velAtParam(float param);
-	void accAtParam(float param);
-	void curvAtParam(float param);
+	Vect posAtParam(float param) { return Vect(); };
+	Vect velAtParam(float param) { return Vect(); };
+	Vect accAtParam(float param) { return Vect(); };
+	float curvAtParam(float param) { return float(); };
 
+	Path(int len);
 	Path();
 	~Path();
 };

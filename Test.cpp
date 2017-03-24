@@ -1,11 +1,10 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-
-using namespace cv;
+#include "Curve.h"
 
 int main()
 {
+	Curve test;
+	test.PascalTriangle(5);
 	
 	return 0;
 }

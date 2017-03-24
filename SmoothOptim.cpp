@@ -20,12 +20,12 @@ Path SmoothOptim::initProfile()
 	return Path();
 }
 
-float SmoothOptim::maxVel(float currIter)
+float SmoothOptim::maxVelProf(float currIter)
 {
 	return 0.0f;
 }
 
-float SmoothOptim::maxAcc(float currIter)
+float SmoothOptim::maxAccProf(float currIter)
 {
 	return 0.0f;
 }
