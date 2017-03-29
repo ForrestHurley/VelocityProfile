@@ -38,6 +38,13 @@ struct Vect
 		return out;
 	}
 
+	Vect operator+(const Vect &b) const {
+		Vect out;
+		out.x = x + b.x;
+		out.y = y + b.y;
+		return out;
+	}
+
 	Vect normalize() const {
 		return *this / magnitude();
 	}

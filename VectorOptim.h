@@ -15,8 +15,8 @@ public:
 	VectorOptim();
 	~VectorOptim();
 private:
-	Vect initMaxVelInDir(int iteration, Path *in);
-	Vect iterMaxVelInDir(int iteration, Path *in);
-	float jerkMagn(int iteration, Path *in);
+	Vect initMaxVelInDir(int iter, int lastIter, Path *in);
+	Vect iterMaxVelInDir(int iter, int lastIter, Path *in);
+	float jerkMagn(int iter, int lastIter, Path *in);
 };
 
