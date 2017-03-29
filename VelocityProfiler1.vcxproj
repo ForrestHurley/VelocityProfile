@@ -152,15 +152,15 @@
     <ClInclude Include="OCVPath.h" />
     <ClInclude Include="Optimizer.h" />
     <ClInclude Include="Path.h" />
-    <ClInclude Include="SmoothOptim.h" />
+    <ClInclude Include="VectorOptim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Curve.cpp" />
     <ClCompile Include="OCVPath.cpp" />
     <ClCompile Include="Optimizer.cpp" />
     <ClCompile Include="Path.cpp" />
-    <ClCompile Include="SmoothOptim.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="VectorOptim.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

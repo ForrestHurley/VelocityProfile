@@ -4,7 +4,7 @@ class Optimizer
 {
 public:
 
-	void generateProfile(Path &in);
+	virtual void generateProfile(Path *in);
 
 	Optimizer();
 	~Optimizer();

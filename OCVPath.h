@@ -12,7 +12,11 @@ public:
 	float lineWidth = 1;
 	cv::Scalar color = cv::Scalar(110, 220, 0);
 
+	static cv::Point vectToPoint(Vect in);
+
 	static void DrawPath(Path in);
+	static void ChartCurvature(Path in);
+	static void Chart(std::vector<float> in);
 
 	OCVPath();
 	~OCVPath();

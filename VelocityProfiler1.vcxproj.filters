@@ -24,10 +24,10 @@
     <ClInclude Include="Optimizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SmoothOptim.h">
+    <ClInclude Include="OCVPath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OCVPath.h">
+    <ClInclude Include="VectorOptim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,13 +41,13 @@
     <ClCompile Include="Optimizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SmoothOptim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OCVPath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorOptim.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,5 @@
 #include "Path.h"
+#include <iostream>
 
 Path::Path(int len)
 {
@@ -38,6 +39,7 @@ void Path::updateCurvature()
 	float step = 1. / numSteps;
 	for (int i = 0; i < numSteps; i++) {
 		path[i].curvature=curvAtParam((float)i*step);
+		//std::cout << path[i].curvature << std::endl;
 	}
 }
 
