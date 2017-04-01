@@ -22,6 +22,8 @@ void Path::initPath()
 	path.clear();
 	path.resize(numSteps);
 	updateLocations();
+	updateParameters();
+	initVelocity();
 	updateCurvature();
 	updateArcLen();
 }
@@ -31,6 +33,22 @@ void Path::updateLocations()
 	float step = 1. / numSteps;
 	for (int i = 0; i < numSteps; i++) {
 		path[i].location=posAtParam((float)i*step);
+	}
+}
+
+void Path::updateParameters()
+{
+	float step = 1. / numSteps;
+	for (int i = 0; i < numSteps; i++) {
+		path[i].proportion = (float)i*step;
+	}
+}
+
+void Path::initVelocity()
+{
+	float step = 1. / numSteps;
+	for (int i = 0; i < numSteps; i++) {
+		path[i].velocity = velAtParam((float)i*step).normalize();
 	}
 }
 

@@ -49,6 +49,12 @@ struct Vect
 		return *this / magnitude();
 	}
 
+	Vect rotNinty() const {
+		Vect out;
+		out.x = y;
+		out.y = -x;
+	}
+
 	float dot(const Vect &b) const{
 		return x*b.x + y*b.y;
 	}
@@ -64,13 +70,17 @@ struct Vect
 	float magnitude() const {
 		return sqrtf(x*x + y*y);
 	}
+
+	float sine(const Vect &b) const {
+		return normalize().cross(b.normalize());
+	}
 };
 
 class Path
 {
 public:
 
-	int numSteps = 400;
+	int numSteps = 20;
 
 	struct Segment
 	{
@@ -88,6 +98,8 @@ public:
 	void initPath();
 
 	void updateLocations();
+	void updateParameters();
+	void initVelocity();
 	void updateCurvature();
 	void updateArcLen();
 
