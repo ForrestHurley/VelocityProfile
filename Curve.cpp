@@ -1,7 +1,5 @@
 #include "Curve.h"
 
-
-
 Vect Curve::posAtParam(float param)
 {
 	int segment;

@@ -2,12 +2,6 @@
 #include <iostream>
 
 
-void VectorOptim::generateProfile(Path *in)
-{
-	
-}
-
-
 VectorOptim::VectorOptim()
 {
 }
@@ -17,48 +11,22 @@ VectorOptim::~VectorOptim()
 {
 }
 
-void VectorOptim::initMaxVel(Path * in)
+Optimizer::bounds VectorOptim::backCheck(Path * in, int iter, int forward)
 {
-	for (int i = 0; i < in->path.size(); i++) {
-		in->path[i].velocity = in->path[i].velocity.normalize()*(maximumVelocity + 1);
-	}
+	return kinematicBoundsKin(in, iter, forward);
 }
 
-void VectorOptim::recurOptim(Path * in, int iter, int forward, bounds(*backCheck)(Path *in, int iter, bool forward), bounds(*foreCheck)(Path *in, int iter, bool forward))
+Optimizer::bounds VectorOptim::foreCheck(Path * in, int iter, int forward)
 {
-
-	bounds lastBounds;
-	bounds nextBounds;
-	bounds finalBounds;
-
-	while (true) {
-
-		lastBounds = backCheck(in, iter, forward);
-		nextBounds = foreCheck(in, iter, forward);
-
-		finalBounds = lastBounds;
-		finalBounds.combine(nextBounds);
-
-		if (finalBounds.null()) {
-			recurOptim(in, iter, -forward, backCheck, foreCheck);
-		}
-		
-		if (finalBounds.max > in->path[iter].velocity.magnitude()) {
-			
-			break;
-		}
-
-		iter += forward;
-		if ((iter < 0) || (iter > in->path.size())) {
-			
-			break;
-		}
-
-	}
-
+	return kinematicBounds(in, iter, forward);
 }
 
-VectorOptim::bounds VectorOptim::maxJerkKin(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::staticCheck(Path * in, int iter, int forward)
+{
+	return maxVelocity(in, iter, forward);
+}
+
+Optimizer::bounds VectorOptim::maxJerkKin(Path * in, int iter, int forward)
 {
 	Vect lastVel = in->path[iter - forward].velocity;
 	Vect lastAcc = in->path[iter - forward].acceleration;
@@ -73,7 +41,7 @@ VectorOptim::bounds VectorOptim::maxJerkKin(Path * in, int iter, int forward)
 	return out;
 }
 
-VectorOptim::bounds VectorOptim::maxAccelerationKin(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::maxAccelerationKin(Path * in, int iter, int forward)
 {
 	Vect lastVel = in->path[iter-forward].velocity;
 	Vect dir = in->path[iter].velocity.normalize();
@@ -86,41 +54,41 @@ VectorOptim::bounds VectorOptim::maxAccelerationKin(Path * in, int iter, int for
 	return out;
 }
 
-VectorOptim::bounds VectorOptim::maxVelocityKin(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::kinematicBoundsKin(Path * in, int iter, int forward)
 {
-	return bounds(0, maximumVelocity);
-}
-
-VectorOptim::bounds VectorOptim::kinematicBoundsKin(Path * in, int iter, int forward)
-{
-	bounds out = maxVelocityKin(in, iter, forward);
-	out.combine(maxAccelerationKin(in, iter, forward));
+	bounds out = maxAccelerationKin(in, iter, forward);
 	out.combine(maxJerkKin(in, iter, forward));
 	return out;
 }
 
-VectorOptim::bounds VectorOptim::maxJerk(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::maxJerk(Path * in, int iter, int forward)
 {
 	float accel = in->path[iter - forward].acceleration.magnitude();
 	float sine = in->path[iter].acceleration.sine(in->path[iter].velocity);
-	float max = 
+	//float max = 
 	return bounds();
 }
 
-VectorOptim::bounds VectorOptim::maxAcceleration(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::maxAcceleration(Path * in, int iter, int forward)
 {
 	float length = getArcLength(in, iter, forward);
-	float max = sqrtf(maximumAcceleration*length / in->path[iter].acceleration.sine(in->path[iter].velocity));
-	
+	float max = sqrtf(abs(maximumAcceleration*length / in->path[iter-forward].acceleration.sine(in->path[iter-forward].velocity)));
+	if (isnan(max)) max = sqrtf(maximumAcceleration*length);
+	//std::cout << "Max forward vel from acceleration: " << max << " Sine: " << in->path[iter-forward].acceleration.sine(in->path[iter-forward].velocity) << " Length: " << length << std::endl;
 	bounds out(0, max);
 	return out;
 }
 
-VectorOptim::bounds VectorOptim::kinematicBounds(Path * in, int iter, int forward)
+Optimizer::bounds VectorOptim::kinematicBounds(Path * in, int iter, int forward)
 {
 	bounds out = maxAcceleration(in, iter, forward);
 	out.combine(maxJerk(in, iter, forward));
 	return out;
+}
+
+Optimizer::bounds VectorOptim::maxVelocity(Path * in, int iter, int forward)
+{
+	return bounds(0, maximumVelocity);
 }
 
 float VectorOptim::estimVelTime(Path * in, int iter, int forward)
@@ -141,4 +109,18 @@ float VectorOptim::getMaxJerkMagn(Path * in, int iter, int forward)
 float VectorOptim::getArcLength(Path * in, int iter, int forward)
 {
 	return abs(in->path[iter].arclen - in->path[iter - forward].arclen);
+}
+
+void VectorOptim::updateParameters(Path * in, int iter, int forward)
+{
+	updateAcceleration(in, iter, forward);
+}
+
+
+void VectorOptim::updateAcceleration(Path * in, int iter, int forward)
+{
+	in->path[iter].acceleration.x = in->path[iter].velocity.x - in->path[iter-forward].velocity.x;
+	in->path[iter].acceleration.y = in->path[iter].velocity.y - in->path[iter-forward].velocity.y;
+
+	in->path[iter].acceleration = in->path[iter].acceleration / estimVelTime(in, iter, forward);
 }

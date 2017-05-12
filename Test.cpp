@@ -16,17 +16,16 @@ int main()
 	test.addSegment(testPointsA);
 	//test.addSegment(testPointsB);
 
-	test.updateLocations();
-	test.updateCurvature();
+	test.initPath();
 	VectorOptim profiler;
-	profiler.maxAcceleration = 3;
-	profiler.maxJerk = 1;
-	profiler.maxVelocity = 30;
+	profiler.maximumAcceleration = 3;
+	profiler.maximumJerk = 1;
+	profiler.maximumVelocity = 30;
 	profiler.generateProfile(&test);
 
 	OCVPath::ChartVelocity(test);
-	OCVPath::ChartAcceleration(test);
-	OCVPath::ChartJerk(test);
+	//OCVPath::ChartAcceleration(test);
+	//OCVPath::ChartJerk(test);
 	OCVPath::DrawPath(test);
 	OCVPath::ChartCurvature(test);
 
