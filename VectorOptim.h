@@ -55,6 +55,7 @@ private:
 	//Gets delta arc length from the previously calculated path absolute arc lengths
 	float getArcLength(Path *in, int iter, int forward);
 
+	//Override function to update path parameters
 	void updateParameters(Path *in, int iter, int forward);
 	void updateAcceleration(Path *in, int iter,int forward);
 };

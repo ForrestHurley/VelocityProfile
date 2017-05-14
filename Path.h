@@ -80,7 +80,7 @@ class Path
 {
 public:
 
-	int numSteps = 40;
+	int numSteps = 70;
 
 	struct Segment
 	{

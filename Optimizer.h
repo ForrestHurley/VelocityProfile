@@ -22,7 +22,7 @@ public:
 
 		//If there are no real numbers greater than min and less than max, returns true
 		bool null() {
-			if (max < min) return true;
+			if (min - max > 0.001) return true;
 			return false;
 		}
 
@@ -41,6 +41,7 @@ public:
 	float minimumVelocity = 0;
 
 	float initialVelocity = 0;
+	float finalVelocity = 0;
 
 	//Generates the velocity profile for a path
 	void generateProfile(Path *in);

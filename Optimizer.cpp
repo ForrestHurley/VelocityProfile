@@ -4,8 +4,10 @@
 
 void Optimizer::generateProfile(Path * in)
 {
+	in->initPath();
 	initMaxVel(in);
 	in->path[0].velocity = in->path[0].velocity.normalize() * initialVelocity;
+	in->path[in->path.size()-1].velocity = in->path[in->path.size() - 1].velocity.normalize() * finalVelocity;
 	recurOptim(in, 1, 1);
 }
 
@@ -24,6 +26,7 @@ void Optimizer::recurOptim(Path * in, int iter, int forward)
 	bounds lastBounds;
 	bounds staticBounds;
 	bounds nextBounds;
+	bounds nonVelBounds;
 	bounds finalBounds;
 
 	while (true) {
@@ -34,25 +37,47 @@ void Optimizer::recurOptim(Path * in, int iter, int forward)
 		nextBounds = foreCheck(in, iter, forward);
 
 		//Perform a intersection operation on the bounds to get the range of speeds which satisfy both
-		finalBounds = lastBounds;
-		finalBounds.combine(nextBounds);
-		finalBounds.combine(staticBounds);
+		nonVelBounds = staticBounds;
+		nonVelBounds.combine(nextBounds);
+
+		if (nonVelBounds.null()) {
+			std::cout << "No possible velocity profile. There may be an error in the static and forward looking kinematic constraints" << std::endl;
+			break;
+		}
+
+		finalBounds = nonVelBounds;
+		finalBounds.combine(lastBounds);
+		
 		//std::cout << "Last Bounds: " << lastBounds.max << " Next Bounds: " << nextBounds.max << " Static Bounds: " << staticBounds.max << std::endl;
 
 		//If there are no possible velocities, recurse and flip directions
 		if (finalBounds.null()) {
-			std::cout << "Final Bounds Null" << std::endl;
-			recurOptim(in, iter, -forward);
+			std::cout << "Final Bounds Null, Minimum:" << finalBounds.min << " Maximum: " << finalBounds.max << " Iteration: " << iter << std::endl;
+			std::cout << "lastBounds Minimum: " << lastBounds.min << " Maximum: " << lastBounds.max << std::endl;
+
+			Vect prevVel = in->path[iter].velocity;
+			updateVelocity(in, iter, nonVelBounds.max);
+			updateParameters(in, iter, forward);
+
+			recurOptim(in, iter - forward, -forward);
+			
+			in->path[iter].velocity = prevVel;
+			updateParameters(in, iter, forward);
+
+		}
+		else if (finalBounds.min > in->path[iter].velocity.magnitude()) {
+			std::cout << "Velocity below bounds, Iteration: " << iter << std::endl;
+			recurOptim(in, iter - forward, -forward);
 		}
 		else {
 
 			//If this recursion has succeeded in connecting back to previous values, move back up and continue the previous recursion
 			if (finalBounds.max > in->path[iter].velocity.magnitude()) {
-				std::cout << "Reached solution, regressing. Final Bounds: " << finalBounds.max << " Previous velocity: " << in->path[iter].velocity.magnitude() << std::endl;
+				std::cout << "Reached solution, regressing. Final Bounds: " << finalBounds.max << " Previous velocity: " << in->path[iter].velocity.magnitude() << " Iteration: " << iter << std::endl;
 				
 				//Update the path velocity at the current iteration
-				updateVelocity(in, iter, finalBounds.max);
-				updateParameters(in, iter, forward);
+				//updateVelocity(in, iter, finalBounds.max);
+				//updateParameters(in, iter, forward);
 				
 				break;
 			}
