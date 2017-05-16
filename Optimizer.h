@@ -11,8 +11,12 @@ public:
 
 		//Performs an intersection on two bounds
 		void combine(const bounds &b) {
-			max = std::fminf(max, b.max);
-			min = std::fmaxf(min, b.min);
+			if (isnan(max) || isnan(b.max))
+				max = NAN;
+			else max = std::fminf(max, b.max);
+			if (isnan(min) || isnan(b.min))
+				min = NAN;
+			else min = std::fmaxf(min, b.min);
 		}
 
 		void setBound(float minIn, float maxIn) {
@@ -22,7 +26,7 @@ public:
 
 		//If there are no real numbers greater than min and less than max, returns true
 		bool null() {
-			if (min - max > 0.001) return true;
+			if (min - max > 0.001 || isnan(min) || isnan(max)) return true;
 			return false;
 		}
 
@@ -42,6 +46,8 @@ public:
 
 	float initialVelocity = 0;
 	float finalVelocity = 0;
+
+	bool verbose = false;
 
 	//Generates the velocity profile for a path
 	void generateProfile(Path *in);
@@ -63,11 +69,10 @@ private:
 	//For creating constraints on the maximum and minimum velocity based on the velocities at previous points on the path
 	virtual bounds backCheck(Path *in, int iter, int forward) { return bounds(); };
 
-	//For creating constraints on the maximum and minimum velocity based on future positions on the path. It does not have access to future velocities
-	virtual bounds foreCheck(Path *in, int iter, int forward) { return bounds(); };
-
 	//For creating purely static constraints which are only dependent on the current state of the path and not future or past states. For example, an absolute maximum velocity
 	virtual bounds staticCheck(Path *in, int iter, int forward) { return bounds(); };
+
+	virtual bounds foreCheck(Path *in, int iter, int forward) { return bounds(); };
 
 };
 

@@ -43,8 +43,8 @@ void OCVPath::ChartVelocity(Path in)
 	std::vector<float> toChartY;
 	for (int i = 0; i < in.path.size(); i++) {
 		toChartX.push_back(in.path[i].velocity.magnitude());
-		//toChartY.push_back(in.path[i].time);
-		toChartY.push_back(i);
+		toChartY.push_back(in.path[i].arclen);
+		//toChartY.push_back(i);
 	}
 	Chart(toChartX,toChartY);
 }
@@ -55,8 +55,8 @@ void OCVPath::ChartAcceleration(Path in)
 	std::vector<float> toChartY;
 	for (int i = 0; i < in.path.size(); i++) {
 		toChartX.push_back(in.path[i].acceleration.magnitude());
-		//toChartY.push_back(in.path[i].time);
-		toChartY.push_back(i);
+		toChartY.push_back(in.path[i].arclen);
+		//toChartY.push_back(i);
 	}
 	Chart(toChartX, toChartY);
 }

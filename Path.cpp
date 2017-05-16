@@ -26,6 +26,7 @@ void Path::initPath()
 	initVelocity();
 	updateCurvature();
 	updateArcLen();
+	updateAcceleration();
 }
 
 void Path::updateLocations()
@@ -67,5 +68,13 @@ void Path::updateArcLen()
 	path[0].arclen = 0;
 	for (int i = 1; i < numSteps; i++) {
 		path[i].arclen = path[i - 1].arclen + path[i - 1].location.dist(path[i].location);
+	}
+}
+
+void Path::updateAcceleration()
+{
+	path[0].acceleration = Vect(0,0);
+	for (int i = 1; i < numSteps; i++) {
+		path[i].acceleration = path[i].velocity - path[i - 1].velocity;
 	}
 }

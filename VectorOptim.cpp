@@ -57,7 +57,7 @@ Optimizer::bounds VectorOptim::maxAccelerationKin(Path * in, int iter, int forwa
 Optimizer::bounds VectorOptim::kinematicBoundsKin(Path * in, int iter, int forward)
 {
 	bounds out = maxAccelerationKin(in, iter, forward);
-	out.combine(maxJerkKin(in, iter, forward));
+	//out.combine(maxJerkKin(in, iter, forward));
 	return out;
 }
 

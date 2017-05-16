@@ -46,13 +46,18 @@ struct Vect
 	}
 
 	Vect normalize() const {
-		return *this / magnitude();
+		float magn = magnitude();
+		if (magn != 0)
+			return *this / magnitude();
+		else
+			return Vect(0,0);
 	}
 
 	Vect rotNinty() const {
 		Vect out;
 		out.x = y;
 		out.y = -x;
+		return out;
 	}
 
 	float dot(const Vect &b) const{
@@ -80,7 +85,7 @@ class Path
 {
 public:
 
-	int numSteps = 70;
+	int numSteps = 150;
 
 	struct Segment
 	{
@@ -102,6 +107,7 @@ public:
 	void initVelocity();
 	void updateCurvature();
 	void updateArcLen();
+	void updateAcceleration();
 
 	virtual Vect posAtParam(float param) { return Vect(); };
 	virtual Vect velAtParam(float param) { return Vect(); };
