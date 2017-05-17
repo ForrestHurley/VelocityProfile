@@ -15,6 +15,7 @@ public:
 	static cv::Point vectToPoint(Vect in);
 
 	static void DrawPath(Path in);
+	static void ChartPositionVsTime(Path in);
 	static void ChartCurvature(Path in);
 	static void ChartVelocity(Path in);
 	static void ChartAcceleration(Path in);

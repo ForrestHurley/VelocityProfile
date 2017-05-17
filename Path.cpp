@@ -78,3 +78,11 @@ void Path::updateAcceleration()
 		path[i].acceleration = path[i].velocity - path[i - 1].velocity;
 	}
 }
+
+void Path::updateTime()
+{
+	path[0].time = 0;
+	for (int i = 1; i < numSteps; i++) {
+		path[i].time = path[i-1].time + path[i - 1].location.dist(path[i].location) / (path[i].velocity.magnitude()+path[i-1].velocity.magnitude()) * 2.;
+	}
+}

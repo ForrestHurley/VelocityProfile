@@ -15,27 +15,80 @@ Optimizer::bounds StandOptim::backCheck(Path * in, int iter, int forward)
 {
 	bounds out = bounds(in->path[iter - forward].velocity.magnitude() - getMaxAccMagn(in, iter, forward), in->path[iter - forward].velocity.magnitude() + getMaxAccMagn(in, iter, forward));
 	out.combine(maxAccelerationKin(in, iter, forward));
-	out.combine(maxJerkKin(in, iter, forward));
+	//out.combine(maxJerkKin(in, iter, forward));
 	//std::cout << "Max Acc: " << maxAccelerationKin(in, iter, forward).min << " Max Jerk: " << maxJerkKin(in, iter, forward).min << std::endl;
 	return out;
 }
 
-Optimizer::bounds StandOptim::foreCheck(Path * in, int iter, int forward)
+Optimizer::bounds StandOptim::returnCheck(Path * in, int iter, int forward)
 {
 	bounds out = bounds(0, maximumVelocity);
-	out.combine(maxJerkKin(in, iter, forward));
-	out.combine(maxJerkKin(in, iter, -forward));
+	out.min = 0;
+	out.max = in->path[iter-forward].velocity.magnitude();
+	std::cout << "Return Check: " << out.max << std::endl;
 	return out;
 }
 
 Optimizer::bounds StandOptim::staticCheck(Path * in, int iter, int forward)
 {
 	bounds out = bounds(0, maximumVelocity);
-
 	out.combine(minAccBound(in, iter, forward));
-	out.combine(minJerkBound(in, iter, forward));
-	out.combine(minJerkBound(in, iter, -forward));
+	//out.combine(minJerkBound(in, iter, forward));
+	//out.combine(minJerkBound(in, iter, -forward));
+	//std::cout << "Iteration: " << iter << " Direction: " << forward << std::endl;
+	//std::cout << "Static Bounds Min: " << out.min << " Max: " << out.max << std::endl;
+	return out;
+}
 
+float StandOptim::flipVal(Path * in, int iter, int forward)
+{
+	Vect farOutVel;
+	Vect beforeLastVel;
+	Vect lastVel;
+	Vect currentVel = in->path[iter].velocity;
+
+	
+	if ((iter < 1 && forward > 0) || (iter > in->path.size() - 1 && forward < 0)) {
+		lastVel = currentVel;
+		beforeLastVel = currentVel;
+		farOutVel = currentVel;
+	}
+	else if ((iter < 2 && forward > 0) || (iter > in->path.size() - 2 && forward < 0)) {
+		lastVel = in->path[iter - forward].velocity;
+		beforeLastVel = lastVel;
+		farOutVel = lastVel;
+	}
+	else if ((iter < 3 && forward > 0 || (iter > in->path.size() - 3 && forward < 0))) {
+		lastVel = in->path[iter - forward].velocity;
+		beforeLastVel = in->path[iter - 2 * forward].velocity;
+		farOutVel = beforeLastVel;
+	}
+	else {
+		lastVel = in->path[iter - forward].velocity;
+		beforeLastVel = in->path[iter - 2 * forward].velocity;
+		farOutVel = in->path[iter - 3 * forward].velocity;
+	}
+
+	if (lastVel.magnitude() > maximumVelocity)
+		lastVel = currentVel;
+	if (beforeLastVel.magnitude() > maximumVelocity)
+		beforeLastVel = lastVel;
+	if (farOutVel.magnitude() > maximumVelocity)
+		farOutVel = beforeLastVel;
+
+	Vect beforeLastNorm = beforeLastVel.normalize();
+	Vect lastNorm = lastVel.normalize();
+	Vect currentNorm = currentVel.normalize();
+
+	Vect lastAcc = beforeLastVel - farOutVel;
+
+	float accMagn = lastAcc.magnitude();
+	float velMagn = currentVel.magnitude();
+
+	float cross = currentNorm.cross(lastNorm);
+
+	float out = velMagn*(lastNorm.dot(currentNorm))-sqrtf(accMagn*accMagn-velMagn*velMagn*cross*cross);
+	std::cout << "Returned Value from FlipCheck: " << out << " Cross Product: " << cross << " Last Velocity: " << lastVel.magnitude() << " Before Last Velocity: " << beforeLastVel.magnitude() << " Far Out Velocity: " << farOutVel.magnitude() << " Acceleration: " << accMagn << std::endl;
 	return out;
 }
 
@@ -154,6 +207,7 @@ Optimizer::bounds StandOptim::maxJerkKin(Path * in, int iter, int forward)
 			beforeLastVel = lastVel;
 
 		float lastAcc = (lastVel - beforeLastVel).magnitude() / estimVelTime(in, iter - forward, forward);
+		std::cout << "Last Acceleration: " << lastAcc << " Max Jerk: " << getMaxJerkMagn(in, iter, forward) << std::endl;
 		newAccA = lastAcc*estimVelTime(in,iter,forward) + getMaxJerkMagn(in, iter, forward);
 		newAccB = lastAcc*estimVelTime(in, iter, forward) - getMaxJerkMagn(in, iter, forward);
 	}
@@ -175,6 +229,9 @@ Optimizer::bounds StandOptim::maxJerkKin(Path * in, int iter, int forward)
 	bounds out;
 	out.min = dot + descrimB;
 	out.max = dot + descrimA;
+	std::cout << "DescrimB: " << descrimB << " DescrimA: " << descrimA << std::endl;
+	std::cout << "Dot: " << dot << " Last Velocity: " << lastVel.magnitude() << std::endl;
+	std::cout << "Min: " << out.min << " Max: " << out.max << std::endl;
 	return out;
 }
 
@@ -195,5 +252,8 @@ float StandOptim::getMaxJerkMagn(Path * in, int iter, int forward)
 
 float StandOptim::getArcLength(Path * in, int iter, int forward)
 {
+	if ((iter < 1 && forward > 0) || (iter>in->path.size() - 2 && forward < 0)) {
+		return 0;
+	}
 	return abs(in->path[iter].arclen - in->path[iter - forward].arclen);
 }

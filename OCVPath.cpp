@@ -25,6 +25,18 @@ void OCVPath::DrawPath(Path in)
 	waitKey(0);
 }
 
+void OCVPath::ChartPositionVsTime(Path in)
+{
+	std::vector<float> toChartX;
+	std::vector<float> toChartY;
+	for (int i = 0; i < in.path.size(); i++) {
+		toChartX.push_back(in.path[i].arclen);
+		toChartY.push_back(in.path[i].time);
+		//toChartY.push_back(i);
+	}
+	Chart(toChartX, toChartY);
+}
+
 void OCVPath::ChartCurvature(Path in)
 {
 	std::vector<float> toChartX;
@@ -63,11 +75,14 @@ void OCVPath::ChartAcceleration(Path in)
 
 void OCVPath::ChartJerk(Path in)
 {
-	std::vector<float> toChart;
-	for (int i = 0; i < in.path.size()-1; i++) {
-		toChart.push_back((in.path[i + 1].acceleration.magnitude() - in.path[i].acceleration.magnitude()));
+	std::vector<float> toChartX;
+	std::vector<float> toChartY;
+	for (int i = 0; i < in.path.size() - 1; i++) {
+		toChartX.push_back(abs(in.path[i + 1].acceleration.magnitude() - in.path[i].acceleration.magnitude()));
+		toChartY.push_back(in.path[i].arclen);
+		//toChartY.push_back(i);
 	}
-	Chart(toChart);
+	Chart(toChartX, toChartY);
 }
 
 void OCVPath::Chart(std::vector<float> in)

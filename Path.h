@@ -85,7 +85,7 @@ class Path
 {
 public:
 
-	int numSteps = 150;
+	int numSteps = 500;
 
 	struct Segment
 	{
@@ -108,6 +108,7 @@ public:
 	void updateCurvature();
 	void updateArcLen();
 	void updateAcceleration();
+	void updateTime();
 
 	virtual Vect posAtParam(float param) { return Vect(); };
 	virtual Vect velAtParam(float param) { return Vect(); };

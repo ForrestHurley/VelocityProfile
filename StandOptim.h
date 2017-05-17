@@ -25,8 +25,9 @@ private:
 	}
 
 	bounds backCheck(Path *in, int iter, int forward);
-	bounds foreCheck(Path *in, int iter, int forward);
+	bounds returnCheck(Path *in, int iter, int forward);
 	bounds staticCheck(Path *in, int iter, int forward);
+	float flipVal(Path *in, int iter, int forward);
 
 	bounds minAccBound(Path *in, int iter, int forward);
 	bounds minJerkBound(Path *in, int iter, int forward);

@@ -44,8 +44,8 @@ public:
 	float maximumVelocity = 10;
 	float minimumVelocity = 0;
 
-	float initialVelocity = 0;
-	float finalVelocity = 0;
+	float initialVelocity = 0.001;
+	float finalVelocity = 0.001;
 
 	bool verbose = false;
 
@@ -72,7 +72,8 @@ private:
 	//For creating purely static constraints which are only dependent on the current state of the path and not future or past states. For example, an absolute maximum velocity
 	virtual bounds staticCheck(Path *in, int iter, int forward) { return bounds(); };
 
-	virtual bounds foreCheck(Path *in, int iter, int forward) { return bounds(); };
+	virtual bounds returnCheck(Path *in, int iter, int forward) { return bounds(); };
 
+	virtual float flipVal(Path *in, int iter, int forward) { return 0.0f; };
 };
 
